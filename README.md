@@ -1,7 +1,7 @@
 # sfl_trader 一个简洁快速轻量级的可扩展的程序化交易框架
 * Linux，python3，目前的交易接口只有CTP
 * 采用了[Quicklib](http://www.quicklib.cn/)的底层架构，感谢Quicklib作者[wdgwz](https://github.com/wdgwz)
-* 用[pevents](https://github.com/neosmart/pevents)将Quicklib使用的Windows系统的WaitForMultipleObjects移植到Linux系统，感谢pevents的作者[neosmart](https://github.com/neosmart/pevents)、[mqudsi](https://github.com/mqudsi)。
+* 用[pevents](https://github.com/neosmart/pevents)将Quicklib使用的Windows系统的WaitForMultipleObjects移植到Linux系统，感谢pevents的作者[neosmart](https://github.com/neosmart)、[mqudsi](https://github.com/mqudsi)。
 * 设计实现该框架的最初目的是为了将我自己的交易策略自动地跑在云服务器上
 
 ### 扩展
