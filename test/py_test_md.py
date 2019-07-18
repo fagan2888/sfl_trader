@@ -18,9 +18,9 @@ if __name__ == '__main__':
     api_base = APIBase()
     api_base.start_wait(func_map)
     if ctp_md.is_ok():
-        ctp_md.subscribe('cu1908C48000')
+        ctp_md.subscribe('cu1909')
     while input() != 'q':
         pass
-    ctp_md.unsubscribe('cu1908C48000')
+    ctp_md.unsubscribe('cu1909')
     api_base.close()
 
