@@ -10,6 +10,13 @@ CTPOnDepthMarketData = 1
 TimerInterval = 2
 TimerCron = 3
 
+# ExchangeID
+CFFEX = 'CFFEX'  # 金融期货交易所
+CZCE = 'CZCE'    # 郑商所
+DCE = 'DCE'      # 大商所
+INE = 'INE'      # 能源期货交易所
+SHFE = 'SHFE'    # 上期所
+
 # 买卖方向
 CTP_D_BUY = c_char(b'0')
 CTP_D_SELL = c_char(b'1')

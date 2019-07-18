@@ -17,11 +17,11 @@ class CTPTd(object):
         #         break
         #     time.sleep(0.5)
         self._insert_order = self.so.insert_order
-        self._insert_order.argtypes = [c_char_p, c_char, c_char, c_char, c_double, c_int]
+        self._insert_order.argtypes = [c_char_p, c_char_p, c_char, c_char, c_char, c_double, c_int]
         self._insert_order.restype = c_int
 
         self._delete_order = self.so.delete_order
-        self._delete_order.argtypes = [c_char_p, c_int]
+        self._delete_order.argtypes = [c_char_p, c_char_p, c_int]
         self._delete_order.restype = c_int
 
         self._get_order_data = self.so.get_order_data
@@ -30,14 +30,14 @@ class CTPTd(object):
 
         self.delete_order_count = 0
 
-    def insert_order(self, instrument, direction, offset_flag, price_type, price, num):
-        a = self._insert_order(c_char_p(instrument.encode()), direction, offset_flag, price_type, price, num)
+    def insert_order(self, instrument, exchange, direction, offset_flag, price_type, price, num):
+        a = self._insert_order(c_char_p(instrument.encode()), c_char_p(exchange.encode()), direction, offset_flag, price_type, price, num)
         return a
 
-    def delete_order(self, instrument, order_ref):
+    def delete_order(self, instrument, exchange, order_ref):
         self.delete_order_count += 1
         if self.delete_order_count <= 100:
-            return self._delete_order(c_char_p(instrument.encode()), order_ref)
+            return self._delete_order(c_char_p(instrument.encode()), c_char_p(exchange.encode()), order_ref)
         else:
             print('撤单次数大于100次,不能再撤单')
             return -1

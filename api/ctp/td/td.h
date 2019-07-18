@@ -405,15 +405,15 @@ public:
     void ReqSettlementInfoConfirm();
     void ReqUserLogout();
 
-    int InsertOrder(char *Instrument, char direction, char offsetFlag, char priceType, double price, int num);
-    int DeleteOrder(char *Instrument, int OrderRef);
+    int InsertOrder(char *Instrument, char *Exchange, char direction, char offsetFlag, char priceType, double price, int num);
+    int DeleteOrder(char *Instrument, char *Exchange, int OrderRef);
 };
 
 extern "C"
 {
     bool is_api_ok();
-    int insert_order(char *Instrument, char direction, char offsetFlag, char priceType, double price, int num);
-    int delete_order(char *Instrument, int OrderRef);
+    int insert_order(char *Instrument, char *Exchange, char direction, char offsetFlag, char priceType, double price, int num);
+    int delete_order(char *Instrument, char *Exchange, int OrderRef);
     void * get_order_data();
 }
 

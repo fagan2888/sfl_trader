@@ -713,9 +713,9 @@ void TdApi::ReqUserLogout()
     cout << "Td 发送用户退出登录请求 : " << ((result == 0) ? "成功" : "失败") << endl;
 }
 
-int TdApi::InsertOrder(char *Instrument, char direction, char offsetFlag, char priceType, double price, int num)
+int TdApi::InsertOrder(char *Instrument, char *Exchange, char direction, char offsetFlag, char priceType, double price, int num)
 {
-    cout << "InsertOrder " << Instrument << "|" << direction << "|" << offsetFlag << "|" << priceType <<
+    cout << "InsertOrder " << Instrument << "|" << Exchange << "|" << direction << "|" << offsetFlag << "|" << priceType <<
         "|" << price << "|" << num << endl;
     CThostFtdcInputOrderField req;
     memset(&req, 0, sizeof(req));
@@ -732,6 +732,7 @@ int TdApi::InsertOrder(char *Instrument, char direction, char offsetFlag, char p
     req.UserForceClose = 0;
     // --------------------------------------------------
     strcpy(req.InstrumentID, Instrument);
+    strcpy(req.ExchangeID, Exchange);
     req.CombOffsetFlag[0] = offsetFlag;
     req.Direction = direction;
     req.VolumeTotalOriginal = num;
@@ -742,14 +743,15 @@ int TdApi::InsertOrder(char *Instrument, char direction, char offsetFlag, char p
     return order_ref;
 }
 
-int TdApi::DeleteOrder(char *Instrument, int OrderRef)
+int TdApi::DeleteOrder(char *Instrument, char *Exchange, int OrderRef)
 {
-    cout << "DeleteOrder " << Instrument << "|"  << OrderRef << endl;
+    cout << "DeleteOrder " << Instrument << "|" << Exchange << "|"  << OrderRef << endl;
     CThostFtdcInputOrderActionField req_del;
     memset(&req_del, 0, sizeof(req_del));
     strcpy(req_del.BrokerID, broker_id);
     strcpy(req_del.InvestorID, user_id);
     strcpy(req_del.InstrumentID, Instrument);
+    strcpy(req_del.ExchangeID, Exchange);
     sprintf(req_del.OrderRef, "%012d", OrderRef);
     req_del.FrontID = FRONT_ID;
     req_del.SessionID = SESSION_ID;
@@ -787,14 +789,14 @@ extern "C"
         return g_td_api.is_api_ok;
     }
 
-    int insert_order(char *Instrument, char direction, char offsetFlag, char priceType, double price, int num)
+    int insert_order(char *Instrument, char *Exchange, char direction, char offsetFlag, char priceType, double price, int num)
     {
-        return g_td_api.InsertOrder(Instrument, direction, offsetFlag, priceType, price, num);
+        return g_td_api.InsertOrder(Instrument, Exchange, direction, offsetFlag, priceType, price, num);
     }
 
-    int delete_order(char *Instrument, int OrderRef)
+    int delete_order(char *Instrument, char *Exchange, int OrderRef)
     {
-        return g_td_api.DeleteOrder(Instrument, OrderRef);
+        return g_td_api.DeleteOrder(Instrument, Exchange, OrderRef);
     }
 
     void * get_order_data()

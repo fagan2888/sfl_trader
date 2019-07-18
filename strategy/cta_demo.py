@@ -8,9 +8,10 @@ from api.api_define import FLOAT_MIN
 
 class CTADemo(Kernel):
 
-    def __init__(self, instrument, tick_size, threshold=2):
+    def __init__(self, instrument, exchange, tick_size, threshold=2):
         super().__init__('cta_demo_' + instrument + '_' + str(threshold))
         self.instrument = instrument
+        self.exchange = exchange
         self.tick_size = tick_size
         self.threshold = threshold
         self.status = 0
@@ -90,7 +91,7 @@ class CTADemo(Kernel):
                 self.conditions_short = self.conditions_short[-100:]
             if self.status == 0:
                 if sum(self.conditions_long[-self.threshold:]) == self.threshold:
-                    order_ref = self.td.insert_order(self.instrument, CTP_D_BUY, CTP_OF_OPEN,
+                    order_ref = self.td.insert_order(self.instrument, self.exchange, CTP_D_BUY, CTP_OF_OPEN,
                                                      CTP_OPT_LIMIT_PRICE, self.bid_p1 + self.tick_size, 1)
                     self.add_order_ref(order_ref, self.order_ref_map)
                     self.order_ref_long = order_ref
@@ -101,7 +102,7 @@ class CTADemo(Kernel):
                     self.delete_order_count = 0
                     self.logger.info(f'status 0->1, order_ref:{order_ref}, price:{self.price_long}')
                 elif sum(self.conditions_short[-self.threshold:]) == self.threshold:
-                    order_ref = self.td.insert_order(self.instrument, CTP_D_SELL, CTP_OF_OPEN,
+                    order_ref = self.td.insert_order(self.instrument, self.exchange, CTP_D_SELL, CTP_OF_OPEN,
                                                      CTP_OPT_LIMIT_PRICE, self.ask_p1 - self.tick_size, 1)
                     self.add_order_ref(order_ref, self.order_ref_map)
                     self.price_short = self.ask_p1
@@ -114,7 +115,7 @@ class CTADemo(Kernel):
             elif self.status == 1:
                 self.count_long += 1
                 if self.count_long >= 5:
-                    self.td.delete_order(self.instrument, self.order_ref_long)
+                    self.td.delete_order(self.instrument, self.exchange, self.order_ref_long)
                     self.my_delete_count += 1
                     self.delete_order_count += 1
                     if self.delete_order_count > 5:
@@ -123,7 +124,7 @@ class CTADemo(Kernel):
             elif self.status == 2:
                 self.count_short += 1
                 if self.count_short >= 5:
-                    self.td.delete_order(self.instrument, self.order_ref_short)
+                    self.td.delete_order(self.instrument, self.exchange, self.order_ref_short)
                     self.my_delete_count += 1
                     self.delete_order_count += 1
                     if self.delete_order_count > 5:
@@ -133,7 +134,7 @@ class CTADemo(Kernel):
                 if bid_p1 > self.max_bid_long:
                     self.max_bid_long = bid_p1
                 if bid_p1 < max(self.price_long, self.max_bid_long) or (151000 > tick_time > 145500):
-                    order_ref = self.td.insert_order(self.instrument, CTP_D_SELL, CTP_OF_CLOSE_TODAY,
+                    order_ref = self.td.insert_order(self.instrument, self.exchange, CTP_D_SELL, CTP_OF_CLOSE_TODAY,
                                                      CTP_OPT_LIMIT_PRICE, bid_p1, 1)
                     self.add_order_ref(order_ref, self.order_ref_map)
                     self.order_ref_long = order_ref
@@ -146,7 +147,7 @@ class CTADemo(Kernel):
                 if ask_p1 < self.min_ask_short:
                     self.min_ask_short = ask_p1
                 if ask_p1 > min(self.price_short, self.min_ask_short) or (151000 > tick_time > 145500):
-                    order_ref = self.td.insert_order(self.instrument, CTP_D_BUY, CTP_OF_CLOSE_TODAY,
+                    order_ref = self.td.insert_order(self.instrument, self.exchange, CTP_D_BUY, CTP_OF_CLOSE_TODAY,
                                                      CTP_OPT_LIMIT_PRICE, ask_p1, 1)
                     self.add_order_ref(order_ref, self.order_ref_map)
                     self.order_ref_short = order_ref
@@ -158,7 +159,7 @@ class CTADemo(Kernel):
             elif self.status == 5:
                 self.count_long += 1
                 if self.count_long >= 2:
-                    self.td.delete_order(self.instrument, self.order_ref_long)
+                    self.td.delete_order(self.instrument, self.exchange, self.order_ref_long)
                     self.my_delete_count += 1
                     self.delete_order_count += 1
                     if self.delete_order_count > 5:
@@ -167,7 +168,7 @@ class CTADemo(Kernel):
             elif self.status == 6:
                 self.count_short += 1
                 if self.count_short >= 2:
-                    self.td.delete_order(self.instrument, self.order_ref_short)
+                    self.td.delete_order(self.instrument, self.exchange, self.order_ref_short)
                     self.my_delete_count += 1
                     self.delete_order_count += 1
                     if self.delete_order_count > 5:
@@ -209,7 +210,7 @@ class CTADemo(Kernel):
                 self.reset()
             elif order_status == b'5':
                 self.delete_order_ref(int_order_ref, self.order_ref_map)
-                order_ref = self.td.insert_order(self.instrument, CTP_D_SELL, CTP_OF_CLOSE_TODAY,
+                order_ref = self.td.insert_order(self.instrument, self.exchange, CTP_D_SELL, CTP_OF_CLOSE_TODAY,
                                                  CTP_OPT_LIMIT_PRICE, self.lower_limit_price, 1)
                 self.add_order_ref(order_ref, self.order_ref_map)
                 self.order_ref_long = order_ref
@@ -221,7 +222,7 @@ class CTADemo(Kernel):
                 self.reset()
             elif order_status == b'5':
                 self.delete_order_ref(int_order_ref, self.order_ref_map)
-                order_ref = self.td.insert_order(self.instrument, CTP_D_BUY, CTP_OF_CLOSE_TODAY,
+                order_ref = self.td.insert_order(self.instrument, self.exchange, CTP_D_BUY, CTP_OF_CLOSE_TODAY,
                                                  CTP_OPT_LIMIT_PRICE, self.upper_limit_price, 1)
                 self.add_order_ref(order_ref, self.order_ref_map)
                 self.order_ref_short = order_ref
