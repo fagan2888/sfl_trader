@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from ctypes import c_char
+from ctypes import c_char, c_char_p
 
 FLOAT_MIN = 0.000001
 
@@ -11,11 +11,11 @@ TimerInterval = 2
 TimerCron = 3
 
 # ExchangeID
-CFFEX = 'CFFEX'  # 金融期货交易所
-CZCE = 'CZCE'    # 郑商所
-DCE = 'DCE'      # 大商所
-INE = 'INE'      # 能源期货交易所
-SHFE = 'SHFE'    # 上期所
+CFFEX = c_char_p(b'CFFEX')  # 金融期货交易所
+CZCE = c_char_p(b'CZCE')    # 郑商所
+DCE = c_char_p(b'DCE')      # 大商所
+INE = c_char_p(b'INE')      # 能源期货交易所
+SHFE = c_char_p(b'SHFE')    # 上期所
 
 # 买卖方向
 CTP_D_BUY = c_char(b'0')
