@@ -5,7 +5,7 @@
 #include <iostream>
 #include <string>
 #include <map>
-#include <list>
+#include <stack>
 #include <fstream>
 #include <stdio.h>
 #include <time.h>

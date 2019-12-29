@@ -6,7 +6,7 @@ using namespace std;
 char time_str[30] = "";
 char * ppInstrumentID[2] = { new TThostFtdcInstrumentIDType , 0 };
 map<string, CThostFtdcDepthMarketDataField *> g_market;
-list<TThostFtdcInstrumentIDTypeStruct> instrument_list;
+stack<TThostFtdcInstrumentIDTypeStruct> instrument_stack;
 TThostFtdcInstrumentIDTypeStruct tmp_instrument_id;
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 char front_addr[32];
@@ -168,7 +168,7 @@ void MdApi::OnRtnDepthMarketData(CThostFtdcDepthMarketDataField *pDepthMarketDat
         TThostFtdcInstrumentIDTypeStruct t;
         strncpy(t.Instrument, pDepthMarketData->InstrumentID, sizeof(t.Instrument));
         pthread_mutex_lock(&mutex);
-        instrument_list.push_front(t);
+        instrument_stack.push(t);
         pthread_mutex_unlock(&mutex);
         api_set(OnRtnDepthMarketDataFuture);
     }
@@ -249,19 +249,13 @@ extern "C"
 {
     char * get_tick_instrument()
     {
-        //if (instrument_list.size() > 0)
-        //{
-            memset(&tmp_instrument_id, 0, sizeof(TThostFtdcInstrumentIDTypeStruct));
-            pthread_mutex_lock(&mutex);
-            memcpy(tmp_instrument_id.Instrument, instrument_list.begin()->Instrument, sizeof(TThostFtdcInstrumentIDType));
-            instrument_list.erase(instrument_list.begin());
-            pthread_mutex_unlock(&mutex);
-            return tmp_instrument_id.Instrument;
-        /*}
-        else
-        {
-            return NULL;
-        }*/
+        //memset(&tmp_instrument_id, 0, sizeof(TThostFtdcInstrumentIDTypeStruct));
+        pthread_mutex_lock(&mutex);
+        memcpy(tmp_instrument_id.Instrument, instrument_stack.top().Instrument, sizeof(TThostFtdcInstrumentIDType));
+        instrument_stack.pop();
+        pthread_mutex_unlock(&mutex);
+        if (!instrument_stack.empty()) api_set(OnRtnDepthMarketDataFuture);
+        return tmp_instrument_id.Instrument;
     }
 
     void subscribe(const char *InstrumentID)
